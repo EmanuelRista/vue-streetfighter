@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SSF Vue</title>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://unpkg.com/vue@next" defer></script>
+  <script src="app.js" defer></script>
+</head>
+
+<body>
+  <header>
+    <h1>Super Street Fighter VUE</h1>
+  </header>
+  <div id="game">
+    <section v-if="!winner" id="monster" class="container">
+      <h2>Balrog Health</h2>
+      <div class="healthbar">
+        <div class="healthbar__value" :style="monsterBarStyles"></div>
+      </div>
+      <img style="height: 200px;" :src="monsterUrl" alt="">
+    </section>
+    <section v-if="!winner" id="player" class="container">
+      <h2>Your Health</h2>
+      <div class="healthbar">
+        <div class="healthbar__value" :style="playerBarStyles"></div>
+      </div>
+      <img style="height: 200px;" :src="playerUrl" alt="">
+    </section>
+    <section class="container" v-if="winner">
+      <h2>Game Over!</h2>
+      <div v-if="winner === 'monster'">
+        <h3>You lost!</h3>
+        <img style="height: 200px" src="img/balrogwin.gif" alt="">
+      </div>
+      <div v-else-if="winner === 'player'">
+        <h3>You won!</h3>
+        <img style="height: 200px" src="img/guilewin.gif" alt="">
+      </div>
+      <div v-else>
+        <h3>It's a draw!</h3>
+        <img style="height: 200px" src="img/nowin.gif" alt="">
+      </div>
+      <button @click="startGame">Start New Game</button>
+    </section>
+    <section style="text-align:center;">
+      <audio controls autoplay>
+        <source src="audio/guiletheme.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+    </section>
+    <section v-if="!winner" id="controls" v-else>
+      <button @click="attackMonster">PUNCH</button>
+      <button :disabled="mayUseSpecialAttack" @click="specialAttackMonster">
+        SONIC BOOM
+      </button>
+      <button @click="healPlayer">HEAL</button>
+      <button @click="surrender">SURRENDER</button>
+    </section>
+    <section v-if="!winner" id="log" class="container">
+      <h2>Battle Log</h2>
+      <ul>
+        <li v-for="logMessage in logMessages">
+          <span
+            :class="{'log--player': logMessage.actionBy === 'player', 'log--monster': logMessage.actionBy === 'monster'}">{{ logMessage.actionBy === 'player' ? 'Player' : 'Monster'
+              }}</span>
+          <span v-if="logMessage.actionType === 'heal'">
+            heals himself for
+            <span class="log--heal">{{ logMessage.actionValue }}</span></span>
+          <span v-else>
+            attacks and deals
+            <span class="log--damage">{{ logMessage.actionValue }}</span>
+          </span>
+        </li>
+      </ul>
+    </section>
+  </div>
+</body>
+
+</html>
